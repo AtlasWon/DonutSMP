@@ -45,7 +45,7 @@ public class DonutTitleScreen extends Screen {
         Draw.glowText(g,f,"C L I E N T",cx,ty+14,DonutConfig.wa(DonutConfig.CYAN,255));
         Draw.separator(g,cx,ty+28,90,DonutConfig.PURPLE,DonutConfig.CYAN);
         Draw.text(g,f,tag,cx,ty+36,DonutConfig.wa(DonutConfig.MID,220));
-        Draw.text(g,f,"Minecraft 1.21.1",cx,ty+50,DonutConfig.wa(DonutConfig.DIM,200));
+        Draw.text(g,f,"Minecraft 1.21.6",cx,ty+50,DonutConfig.wa(DonutConfig.DIM,200));
         int by=height/2+15;Draw.separator(g,cx,by-10,120,DonutConfig.PURPLE,DonutConfig.CYAN);
         Draw.separator(g,cx,by+BG*2+BH+6,120,DonutConfig.CYAN,DonutConfig.PURPLE);
         Draw.sideDecor(g,width,height,time);}
