@@ -1,5 +1,6 @@
 package com.donutsmp.event;
 
+import com.donutsmp.DonutSMP;
 import com.donutsmp.config.DonutConfig;
 import com.donutsmp.render.DonutLoadingScreen;
 import com.donutsmp.render.Draw;
@@ -13,10 +14,13 @@ import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
+@Mod.EventBusSubscriber(modid = DonutSMP.MOD_ID, value = Dist.CLIENT)
 public class ClientEvents {
 
     private static final Particles uniParticles = new Particles();
@@ -25,7 +29,7 @@ public class ClientEvents {
     private static boolean reRendering = false;
 
     @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent e) {
+    public static void onTick(TickEvent.ClientTickEvent e) {
         if (!DonutConfig.ENABLED.get()) return;
         Minecraft mc = Minecraft.getInstance();
         if (mc.screen != null && mc.screen.getClass() == TitleScreen.class)
@@ -33,7 +37,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public void onOpen(ScreenEvent.Opening e) {
+    public static void onOpen(ScreenEvent.Opening e) {
         if (!DonutConfig.ENABLED.get()) return;
         Screen s = e.getNewScreen();
         Minecraft mc = Minecraft.getInstance();
@@ -44,7 +48,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public void onRenderPost(ScreenEvent.Render.Post e) {
+    public static void onRenderPost(ScreenEvent.Render.Post e) {
         if (!DonutConfig.ENABLED.get() || reRendering) return;
         Screen s = e.getScreen();
         int w = s.width, h = s.height;
@@ -61,7 +65,7 @@ public class ClientEvents {
         }
     }
 
-    private void renderUniversal(GuiGraphics g, Screen s, int w, int h, int mx, int my, float pt) {
+    private static void renderUniversal(GuiGraphics g, Screen s, int w, int h, int mx, int my, float pt) {
         if (w != upW || h != upH) { uniParticles.init(w, h); upW = w; upH = h; }
         float time = (float)(System.currentTimeMillis() - uniT0);
         Draw.background(g, w, h, time);
@@ -85,7 +89,7 @@ public class ClientEvents {
         }
     }
 
-    private boolean isLoading(Screen s) {
+    private static boolean isLoading(Screen s) {
         if (s instanceof LevelLoadingScreen || s instanceof ReceivingLevelScreen || s instanceof ConnectScreen) return true;
         if (s instanceof GenericMessageScreen) {
             String t = s.getTitle() != null ? s.getTitle().getString().toLowerCase() : "";
@@ -96,7 +100,7 @@ public class ClientEvents {
         return false;
     }
 
-    private Screen getParent() {
+    private static Screen getParent() {
         Minecraft mc = Minecraft.getInstance();
         return mc.screen instanceof DonutTitleScreen ? mc.screen : null;
     }
