@@ -1,5 +1,6 @@
 package com.donutsmp.event;
 
+import com.donutsmp.DonutSMP;
 import com.donutsmp.config.DonutConfig;
 import com.donutsmp.render.DonutLoadingScreen;
 import com.donutsmp.render.Draw;
@@ -15,7 +16,6 @@ import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class ClientEvents {
 
@@ -24,7 +24,32 @@ public class ClientEvents {
     private static long uniT0 = System.currentTimeMillis();
     private static boolean reRendering = false;
 
-    @SubscribeEvent
+    /**
+     * Register all listeners using addListener - avoids all EventBus annotation issues.
+     */
+    public static void register() {
+        try {
+            var forgeBus = net.minecraftforge.common.MinecraftForge.class
+                    .getField("EVENT_BUS").get(null);
+
+            if (forgeBus instanceof net.minecraftforge.eventbus.api.IEventBus bus) {
+                bus.addListener(ClientEvents::onTick);
+                bus.addListener(ClientEvents::onOpen);
+                bus.addListener(ClientEvents::onRenderPost);
+                DonutSMP.LOGGER.info("[DonutSMP] Events registered via IEventBus.");
+            } else {
+                // Try casting to the new EventBus type
+                var method = forgeBus.getClass().getMethod("addListener", java.util.function.Consumer.class);
+                method.invoke(forgeBus, (java.util.function.Consumer<TickEvent.ClientTickEvent>) ClientEvents::onTick);
+                method.invoke(forgeBus, (java.util.function.Consumer<ScreenEvent.Opening>) ClientEvents::onOpen);
+                method.invoke(forgeBus, (java.util.function.Consumer<ScreenEvent.Render.Post>) ClientEvents::onRenderPost);
+                DonutSMP.LOGGER.info("[DonutSMP] Events registered via reflection.");
+            }
+        } catch (Exception e) {
+            DonutSMP.LOGGER.error("[DonutSMP] Failed to register events", e);
+        }
+    }
+
     public static void onTick(TickEvent.ClientTickEvent e) {
         if (!DonutConfig.ENABLED.get()) return;
         Minecraft mc = Minecraft.getInstance();
@@ -32,7 +57,6 @@ public class ClientEvents {
             mc.setScreen(new DonutTitleScreen());
     }
 
-    @SubscribeEvent
     public static void onOpen(ScreenEvent.Opening e) {
         if (!DonutConfig.ENABLED.get()) return;
         Screen s = e.getNewScreen();
@@ -43,7 +67,6 @@ public class ClientEvents {
         if (s.getClass() == OptionsScreen.class) { e.setNewScreen(new OOptionsScreen(getParent(), mc.options)); return; }
     }
 
-    @SubscribeEvent
     public static void onRenderPost(ScreenEvent.Render.Post e) {
         if (!DonutConfig.ENABLED.get() || reRendering) return;
         Screen s = e.getScreen();
