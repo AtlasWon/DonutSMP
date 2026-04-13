@@ -1,6 +1,5 @@
 package com.donutsmp.event;
 
-import com.donutsmp.DonutSMP;
 import com.donutsmp.config.DonutConfig;
 import com.donutsmp.render.DonutLoadingScreen;
 import com.donutsmp.render.Draw;
@@ -14,13 +13,10 @@ import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = DonutSMP.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ClientEvents {
 
     private static final Particles uniParticles = new Particles();
